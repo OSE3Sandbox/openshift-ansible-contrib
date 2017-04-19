@@ -49,7 +49,7 @@
       S3User: "{{ s3_username }}"
     tags:
       KubernetesCluster: "{{ stack_name }}"
-  when: create_vpc == "yes"
+  when: create_vpc == true
 
 - name: Create Brownfield Infrastructure
   cloudformation:
