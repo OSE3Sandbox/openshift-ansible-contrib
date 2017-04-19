@@ -8,7 +8,7 @@
     vpc_subnet_azs: "{{ lookup('ec2_zones_by_region', region) }}"
   roles:
   # Upload ssh-key
-  - { role: ssh-key, when: create_key == "yes" }
+  - { role: ssh-key, when: create_key == True }
   # Create VPC and subnets in multiple AZ
   - pre-install-check
   - cloudformation-infra
