@@ -1,0 +1,3 @@
+- hosts: cluster_hosts
+  roles:
+  - { role: redhataccess.redhat-access-insights-client, when: ansible_os_family == 'RedHat' }
