@@ -26,6 +26,7 @@ $ yum -y install atomic-openshift-utils \
                  python2-boto3 \
                  python-click \
                  python-httplib2
+$ git clone https://github.com/openshift/openshift-ansible.git /usr/share/ansible/openshift-ansible
 ```
 
 ### Deploying OpenShift Origin
