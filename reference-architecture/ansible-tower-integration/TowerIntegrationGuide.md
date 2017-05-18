@@ -8,7 +8,7 @@ The diagram below illustrates the desired end state of this guide - to have Ansi
 
 ![Overview Diagram][https://github.com/strategicdesignteam/openshift-ansible-contrib/blob/master/reference-architecture/ansible-tower-integration/Overview_Diagram.png]
 
-There are three major stages to achieving the desired end state. 
+Here are the major stages to achieving the desired end state. 
 1. Deploying Ansible Tower on the desired cloud provider. 
 2. Configuring Ansible Tower to deploy OpenShift and other services on the cloud provider of choice.
 3. Performing a deployment. 
@@ -25,18 +25,26 @@ Follow the [Deployment Steps](http://docs.aws.amazon.com/quickstart/latest/ansib
 
 ### Deploying Tower on Google Cloud
 
+
+
 ### Deploying Tower on Microsoft Azure
 
+
+
 ### Deploying Tower on OpenStack
+
+
 
 ### Deploying Tower on VMware
 
 
 
 
-
-
 ## Configuring Ansible Tower for deployments on Amazon Web Services
+
+### Creating a project in Ansible Tower
+
+This guide shows you how to use the master branch of [OpenShift-Ansible-Contrib](https://github.com/openshift/openshift-ansible-contrib). If you want to ensure that no changes are made to the deployment configuration, you may want to [fork the repository](https://help.github.com/articles/fork-a-repo/) to ensure nothing changes without your knowledge.
 
 ### Creating a Workflow in Ansible Tower for your deployment
 
@@ -46,6 +54,7 @@ Follow the [Deployment Steps](http://docs.aws.amazon.com/quickstart/latest/ansib
 
 
 ### Configuring a Workflow to register OpenShift Container Platform and CloudForms with Red Hat Insights
+
 
 ## Configuring Ansible Tower for deployments on Google Cloud Platform
 
