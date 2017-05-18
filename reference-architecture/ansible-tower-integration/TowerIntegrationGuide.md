@@ -6,7 +6,7 @@ This guide explains how to integrate the reference architectures within openshif
 
 The diagram below illustrates the desired end state of this guide - to have Ansible Tower workflows able to deploy OpenShift and other services on various cloud providers, including creating the necessary virtual infrastructure on each cloud provider. 
 
-![Overview Diagram][https://github.com/strategicdesignteam/openshift-ansible-contrib/blob/master/reference-architecture/ansible-tower-integration/Overview_Diagram.png]
+![Overview Diagram](https://github.com/strategicdesignteam/openshift-ansible-contrib/blob/master/reference-architecture/ansible-tower-integration/Overview_Diagram.png)
 
 Here are the major stages to achieving the desired end state. 
 1. Deploying Ansible Tower on the desired cloud provider. 
