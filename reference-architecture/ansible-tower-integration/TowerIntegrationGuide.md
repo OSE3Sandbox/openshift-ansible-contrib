@@ -17,7 +17,10 @@ Currently this guide has support for Amazon Web Services, but we intend to add i
 
 ## Deploying Tower
 
-This section provides information about how to deploy Ansible Tower on various cloud providers. It then provides information about how to configure the deployed Ansible Tower. 
+This section provides information about how to deploy Ansible Tower on various cloud providers. It then provides information about how to configure the deployed Ansible Tower. No matter where you deploy Tower you'll need to do two things:
+
+1. [Obtain a license key](https://www.ansible.com/license)
+2. [Download Ansible Tower](https://www.ansible.com/tower-trial)
 
 ### Deploying Tower on Amazon Web Services (AWS)
 
