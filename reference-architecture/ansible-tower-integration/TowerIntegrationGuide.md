@@ -6,7 +6,7 @@ This guide explains how to integrate the reference architectures within openshif
 
 The diagram below illustrates the desired end state of this guide - to have Ansible Tower workflows able to deploy OpenShift and other services on various cloud providers, including creating the necessary virtual infrastructure on each cloud provider. 
 
-![Overview Diagram](https://github.com/strategicdesignteam/openshift-ansible-contrib/blob/master/reference-architecture/ansible-tower-integration/Overview_Diagram.png)
+![Overview Diagram][https://github.com/strategicdesignteam/openshift-ansible-contrib/blob/master/reference-architecture/ansible-tower-integration/Overview_Diagram.png]
 
 There are three major stages to achieving the desired end state. 
 1. Deploying Ansible Tower on the desired cloud provider. 
@@ -23,32 +23,37 @@ This section provides information about how to deploy Ansible Tower on various c
 
 Follow the [Deployment Steps](http://docs.aws.amazon.com/quickstart/latest/ansible-tower/deployment.html) section of the [Ansible Tower on AWS](http://docs.aws.amazon.com/quickstart/latest/ansible-tower/welcome.html) quickstart guide to deploy Ansible Tower on AWS.
 
+### Deploying Tower on Google Cloud
+
+### Deploying Tower on Microsoft Azure
+
 ### Deploying Tower on OpenStack
-
-
 
 ### Deploying Tower on VMware
 
 
 
-### Deploying Tower on Microsoft Azure
 
-
-
-### Deploying Tower on Google Cloud
 
 
 ## Configuring Ansible Tower for deployments on Amazon Web Services
 
-
-### Creating a Workflow for deployment of 
-
+### Creating a Workflow in Ansible Tower for your deployment
 
 ### Configuring a Workflow to deploy OpenShift Container Platform
-
 
 ### Configuring a Workflow to deploy CloudForms with OpenShift Container Platform
 
 
 ### Configuring a Workflow to register OpenShift Container Platform and CloudForms with Red Hat Insights
+
+## Configuring Ansible Tower for deployments on Google Cloud Platform
+
+## Configuring Ansible Tower for deployments on Microsoft Azure
+
+## Configuring Ansible Tower for deployments on OpenStack
+
+## Configuring Ansible Tower for deployments on VMware
+
+
 
