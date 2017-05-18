@@ -8,7 +8,10 @@ The diagram below illustrates the desired end state of this guide - to have Ansi
 
 ![Overview Diagram](https://github.com/strategicdesignteam/openshift-ansible-contrib/blob/master/reference-architecture/ansible-tower-integration/Overview_Diagram.png)
 
-There are three major stages to achieving the desired end state. Deploying Ansible Tower on the desired cloud provider. Configuring Ansible Tower to deploy OpenShift and other services on the cloud provider of choice, and performing the deployment. 
+There are three major stages to achieving the desired end state. 
+1. Deploying Ansible Tower on the desired cloud provider. 
+2. Configuring Ansible Tower to deploy OpenShift and other services on the cloud provider of choice.
+3. Performing a deployment. 
 
 Currently this guide has support for Amazon Web Services, but we intend to add instructions for other providers. Deployment of the AWS reference architecture for OpenShift Container Platform including registration to the Red Hat Insights service and deployment of CloudForms with the ability to manage OpenShift Container Platform takes approximately 60 minutes.
 
