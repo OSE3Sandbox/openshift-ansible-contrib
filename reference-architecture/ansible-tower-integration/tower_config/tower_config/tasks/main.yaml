@@ -1,11 +1,78 @@
 ---
 
+- name: Install pip
+  yum:
+    name: python2-pip
+    state: present
+  become: true
+
+- name: Install Tower CLI
+  pip:
+    name: ansible-tower-cli
+  become: true
+
+- name: Create tower organization
+  tower_organization:
+    name: "Default"
+    description: "Set to Default since the trial license only allows one organization. You can change it if you have deep pockets"
+    state: present
+    tower_config_file: "~/tower_cli.cfg"
+
 - name: Add tower project
   tower_project:
     name: "openshift-ansible-contrib"
     description: "sync openshift-ansible-contrib"
-    organization: "test"
+    organization: "Default"
+    scm_url: https://github.com/openshift/openshift-ansible-contrib.git
+    scm_type: git
+    scm_branch: master
     state: present
     tower_config_file: "~/tower_cli.cfg"
 
+- name: Add tower credential for machine
+  tower_credential:
+    name: aws-privkey
+    kind: ssh
+    description: aws-privkey
+    organization: "Default"
+    state: present
+    ssh_key_data: {{ AWS_MACHINE_SSH_KEY }}
+    username: ec2-user
+    tower_config_file: "~/tower_cli.cfg"
 
+- name: Add tower credential for aws
+  tower_credential:
+    name: ec2
+    kind: aws
+    description: ec2
+    organization: "Default"
+    state: present
+    username: {{ AWS_KEY }} 
+    password: {{ AWS_SECRET }} 
+    tower_config_file: "~/tower_cli.cfg"
+
+- name: Add tower inventory
+  tower_inventory:
+    name: "aws-inventory"
+    description: "Only the best inventory ... ever!"
+    organization: "Default"
+    state: present
+    tower_config_file: "~/tower_cli.cfg"
+
+- name: Add tower group
+  tower_group:
+    name: aws 
+    description: "to the cloud"
+    source: ec2
+    credential: ec2
+    inventory: "aws-inventory" 
+    source_vars:
+      regions: all
+      regions_exclude: us-gov-west-1,cn-north-1
+      vpc_destination_variable: private_ip_address
+      route53: True
+      rds: False
+      elasticache: False
+      hostname_variable: tag_Name
+    state: present
+    tower_config_file: "~/tower_cli.cfg"
