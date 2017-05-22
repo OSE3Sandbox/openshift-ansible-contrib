@@ -28,21 +28,14 @@ This section provides information about how to deploy Ansible Tower on various c
 
 Follow the [Deployment Steps](http://docs.aws.amazon.com/quickstart/latest/ansible-tower/deployment.html) section of the [Ansible Tower on AWS](http://docs.aws.amazon.com/quickstart/latest/ansible-tower/welcome.html) quickstart guide to deploy Ansible Tower on AWS.
 
-### Deploying Tower on Google Cloud
+## Future Sections
 
+We would like to add the following sections.
 
-
-### Deploying Tower on Microsoft Azure
-
-
-
-### Deploying Tower on OpenStack
-
-
-
-### Deploying Tower on VMware
-
-
++ Deploying Tower on Google Cloud
++ Deploying Tower on Microsoft Azure
++ Deploying Tower on OpenStack
++ Deploying Tower on VMware
 
 
 ## Configuring Ansible Tower for deployments on Amazon Web Services
@@ -51,17 +44,17 @@ This guide shows you how to use the master branch of [OpenShift-Ansible-Contrib]
 
 Once you have Ansible Tower running and licensed you can clone and run the tower_config playbook with the appropriate variables. This will configure Ansible. Just make sure you have your tower_cli.cfg file setup and also make sure you have your AWS_KEY and AWS_SECRET as well as the ssh key you wish to use to authenticate to your machines. Then you can do the following:
 
+Set the appropriate host, username, and password in tower_cli.cfg.
 ```$ $ vi ~/tower_cli.cfg 
 host=tower.domain.com
 username=admin
 password=yourpassword
 ```
 
-```$ git clone https://github.com/strategicdesignteam/openshift-ansible-contrib.git```
-
-```$ cd reference-architecture/ansible-tower-integration/tower_config```
-
-```$ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET>"```
+```
+$ git clone https://github.com/strategicdesignteam/openshift-ansible-contrib.git
+$ cd reference-architecture/ansible-tower-integration/tower_config
+$ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET>"```
 
 | Variable                   | Required           | Description  |
 | ---------------------------|:------------------:| ------------:|
@@ -71,13 +64,14 @@ password=yourpassword
 
 This will *soon* configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services.
 
-## Configuring Ansible Tower for deployments on Google Cloud Platform
+## Future Sections
 
-## Configuring Ansible Tower for deployments on Microsoft Azure
+We would like to add the following sections.
 
-## Configuring Ansible Tower for deployments on OpenStack
-
-## Configuring Ansible Tower for deployments on VMware
++ Configuring Ansible Tower for deployments on Google Cloud Platform
++ Configuring Ansible Tower for deployments on Microsoft Azure
++ Configuring Ansible Tower for deployments on OpenStack
++ Configuring Ansible Tower for deployments on VMware
 
 
 
