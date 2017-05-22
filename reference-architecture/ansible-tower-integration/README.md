@@ -63,6 +63,12 @@ password=yourpassword
 
 ```$ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET>"```
 
+| Variable                   | Required           | Description  |
+| ---------------------------|:------------------:| ------------:|
+| AWS_MACHINE_KEY            | yes                | Your ssh key for connecting to AWS instances  |
+| AWS_KEY                    | yes                | Your AWS Key|
+| AWS_SECRET                 | yes                | Your AWS Extra Key |
+
 This will *soon* configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services.
 
 ## Configuring Ansible Tower for deployments on Google Cloud Platform
