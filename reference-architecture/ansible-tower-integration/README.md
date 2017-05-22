@@ -47,19 +47,23 @@ Follow the [Deployment Steps](http://docs.aws.amazon.com/quickstart/latest/ansib
 
 ## Configuring Ansible Tower for deployments on Amazon Web Services
 
-### Creating a project in Ansible Tower
-
 This guide shows you how to use the master branch of [OpenShift-Ansible-Contrib](https://github.com/openshift/openshift-ansible-contrib). If you want to ensure that no changes are made to the deployment configuration, you may want to [fork the repository](https://help.github.com/articles/fork-a-repo/) to ensure nothing changes without your knowledge.
 
-### Creating a Workflow in Ansible Tower for your deployment
+Once you have Ansible Tower running and licensed you can clone and run the tower_config playbook with the appropriate variables. This will configure Ansible. Just make sure you have your tower_cli.cfg file setup and also make sure you have your AWS_KEY and AWS_SECRET as well as the ssh key you wish to use to authenticate to your machines. Then you can do the following:
 
-### Configuring a Workflow to deploy OpenShift Container Platform
+```$ $ vi ~/tower_cli.cfg 
+host=tower.domain.com
+username=admin
+password=yourpassword
+```
 
-### Configuring a Workflow to deploy CloudForms with OpenShift Container Platform
+```$ git clone https://github.com/strategicdesignteam/openshift-ansible-contrib.git```
 
+```$ cd reference-architecture/ansible-tower-integration/tower_config```
 
-### Configuring a Workflow to register OpenShift Container Platform and CloudForms with Red Hat Insights
+```$ ansible-playbook tower_config.yaml --extra-vars "AWS_KEY=abc AWS_SECRET_KEY=def AWS_MACHINE_SSH_KEY=/path/to/priv_key"```
 
+This will *soon* configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services.
 
 ## Configuring Ansible Tower for deployments on Google Cloud Platform
 
