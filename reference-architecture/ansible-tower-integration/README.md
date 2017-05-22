@@ -54,7 +54,8 @@ password=yourpassword
 ```
 $ git clone https://github.com/strategicdesignteam/openshift-ansible-contrib.git
 $ cd reference-architecture/ansible-tower-integration/tower_config
-$ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET>"```
+$ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET>"
+```
 
 | Variable                   | Required           | Description  |
 | ---------------------------|:------------------:| ------------:|
