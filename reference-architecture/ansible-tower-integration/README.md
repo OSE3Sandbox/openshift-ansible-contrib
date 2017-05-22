@@ -61,7 +61,7 @@ password=yourpassword
 
 ```$ cd reference-architecture/ansible-tower-integration/tower_config```
 
-```$ ansible-playbook tower_config.yaml --extra-vars "AWS_KEY=abc AWS_SECRET_KEY=def AWS_MACHINE_SSH_KEY=/path/to/priv_key"```
+```$ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET>"```
 
 This will *soon* configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services.
 
