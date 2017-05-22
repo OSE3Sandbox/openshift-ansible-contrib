@@ -44,8 +44,8 @@ This guide shows you how to use the master branch of [OpenShift-Ansible-Contrib]
 
 Once you have Ansible Tower running and licensed you can clone and run the tower_config playbook with the appropriate variables. This will configure Ansible. Just make sure you have your tower_cli.cfg file setup and also make sure you have your AWS_KEY and AWS_SECRET as well as the ssh key you wish to use to authenticate to your machines. Then you can do the following:
 
-Set the appropriate host, username, and password in tower_cli.cfg.
-```$ $ vi ~/tower_cli.cfg 
+Set the appropriate host, username, and password in ~/.tower_cli.cfg.
+```$ $ vi ~/.tower_cli.cfg 
 host=tower.domain.com
 username=admin
 password=yourpassword
