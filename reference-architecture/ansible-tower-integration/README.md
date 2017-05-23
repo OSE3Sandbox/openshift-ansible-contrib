@@ -78,7 +78,14 @@ Some interesting notes:
 
 There are many modules for tower (search tower_ [here](http://docs.ansible.com/ansible/list_of_all_modules.html)). There is no ansible module for creating a workflow. It would be helpful if this were available. For now, we will try to use the tower-cli. Also, there is no way to start an SCM update using the tower_project ansible module. It would be helpful if that existed, so the SCM update could be issued and then job_templates could reference the available playbooks that were synchronized.
 
-It also appears that workflows can be exported via a schema. There is a great document [here](https://github.com/ansible/tower-cli/blob/master/docs/WORKFLOWS.md) on how to do workflows via tower-cli. The problem is that schemas use IDs to describe relationships and these IDs are dynamically generated. I'm looking to see if I can just use the schema name now.
+It also appears that workflows can be exported via a schema. There is a great document [here](https://github.com/ansible/tower-cli/blob/master/docs/WORKFLOWS.md) on how to do workflows via tower-cli. The problem is that schemas requires IDs on inventories. These IDs are dynamically generated when a inventory is created, so it's impossible to export a schema with an inventory and pass it to another tower instance and have it imported correctly.
+
+You can use the unconfig_tower playbook to remove everything that was created by the tower_config job. Note that since as mentioned in the "Some Interesting Notes:" section below inventory IDs are dynamically created and required in the schema, if you run this playbook and run tower_config.yaml again, you'll need to edit the schema.yaml *after* the first time it fails and manually change the name of the inventory to match and re-run it again. Alternatively, you can just manually finish creating the workflow. I'll be opening a RFE with the Ansible team on this.
+
+```
+$ cd reference-architecture/ansible-tower-integration/tower_config
+$ ansible-playbook tower_unconfig.yaml
+```
 
 ### Future Sections for configuring deployments of OCP, Insights, CloudForms on Clouds
 
