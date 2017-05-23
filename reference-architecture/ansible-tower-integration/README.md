@@ -85,7 +85,7 @@ Some interesting notes:
 
 There are many modules for tower (search tower_ [here](http://docs.ansible.com/ansible/list_of_all_modules.html)). There is no ansible module for creating a workflow. It would be helpful if this were available. For now, we will try to use the tower-cli. Also, there is no way to start an SCM update using the tower_project ansible module. It would be helpful if that existed, so the SCM update could be issued and then job_templates could reference the available playbooks that were synchronized.
 
-It also appears that workflows can be exported via a schema. There is a great document [here](https://github.com/ansible/tower-cli/blob/master/docs/WORKFLOWS.md) on how to do workflows via tower-cli. The problem is that schemas requires IDs on inventories. These IDs are dynamically generated when a inventory is created, so it's impossible to export a schema with an inventory and pass it to another tower instance and have it imported correctly.
+It also appears that workflows can be exported via a schema. There is a great document [here](https://github.com/ansible/tower-cli/blob/master/docs/WORKFLOWS.md) on how to do workflows via tower-cli. The problem is that schemas requires IDs on inventories. These IDs are dynamically generated when a inventory is created, so it's impossible to export a schema with an inventory and pass it to another tower instance and have it imported correctly. Here is a [issue in github](https://github.com/ansible/tower-cli/issues/302) asking it to be changed.
 
 ### Future Sections for configuring deployments of OCP, Insights, CloudForms on Clouds
 
