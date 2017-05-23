@@ -38,7 +38,11 @@ We would welcome the addition of the the following sections to this guide:
 + Deploying Tower on VMware
 
 
-## Configuring Ansible Tower for deployments on Amazon Web Services
+## Configuring Tower
+
+Once you have deployed Ansible Tower on a provider, you can then configure it to deploy OpenShift Container Platform, CloudForms, and enable Red Hat Insights on OCP and CloudForms. The following sections detail how to do this. 
+
+### Configuring Ansible Tower for deployments on Amazon Web Services
 
 This guide shows you how to use the master branch of [OpenShift-Ansible-Contrib](https://github.com/openshift/openshift-ansible-contrib). If you want to ensure that no changes are made to the deployment configuration, you may want to [fork the repository](https://help.github.com/articles/fork-a-repo/) to ensure nothing changes without your knowledge.
 
@@ -57,13 +61,18 @@ $ cd reference-architecture/ansible-tower-integration/tower_config
 $ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET>"
 ```
 
-| Variable                   | Required           | Description  |
-| ---------------------------|:------------------:| ------------:|
+| Variable                   | Required           | Description                                   |
+| ---------------------------|:------------------:| ---------------------------------------------:|
 | AWS_MACHINE_KEY            | yes                | Your ssh key for connecting to AWS instances  |
-| AWS_KEY                    | yes                | Your AWS Key|
-| AWS_SECRET                 | yes                | Your AWS Extra Key |
+| AWS_KEY                    | yes                | Your AWS Key                                  |
+| AWS_SECRET                 | yes                | Your AWS Extra Key                            |
 
-This will *soon* configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services.
+This will configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services. You should be able to log into Ansible Tower and execute the workflow named "workflow-ocp-aws-install". This workflow will:
+
++ Create a cloudformations template on AWS
++ Install OCP on those machines
++ Deploy CloudForms
++ Enable Red Hat Insights on OCP and CloudForms
 
 Some interesting notes:
 
@@ -71,7 +80,7 @@ There are many modules for tower (search tower_ [here](http://docs.ansible.com/a
 
 It also appears that workflows can be exported via a schema. There is a great document [here](https://github.com/ansible/tower-cli/blob/master/docs/WORKFLOWS.md) on how to do workflows via tower-cli. The problem is that schemas use IDs to describe relationships and these IDs are dynamically generated. I'm looking to see if I can just use the schema name now.
 
-## Future Sections for configuring deployments of OCP, Insights, CloudForms on Clouds
+### Future Sections for configuring deployments of OCP, Insights, CloudForms on Clouds
 
 We would welcome the addition of the following sections:
 
