@@ -16,7 +16,7 @@
     name: "Default"
     description: "Set to Default since the trial license only allows one organization. You can change it if you have deep pockets"
     state: present
-    tower_config_file: "~/tower_cli.cfg"
+    tower_config_file: "~/.tower_cli.cfg"
 
 - name: Add tower project
   tower_project:
@@ -26,8 +26,12 @@
     scm_url: https://github.com/openshift/openshift-ansible-contrib.git
     scm_type: git
     scm_branch: master
+    scm_update_on_launch: true
     state: present
-    tower_config_file: "~/tower_cli.cfg"
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Sync project
+  command: tower-cli project update -n openshift-ansible-contrib
 
 - name: Add tower credential for machine
   tower_credential:
@@ -36,9 +40,9 @@
     description: aws-privkey
     organization: "Default"
     state: present
-    ssh_key_data: {{ AWS_MACHINE_SSH_KEY }}
+    ssh_key_data: "{{ AWS_MACHINE_SSH_KEY }}"
     username: ec2-user
-    tower_config_file: "~/tower_cli.cfg"
+    tower_config_file: "~/.tower_cli.cfg"
 
 - name: Add tower credential for aws
   tower_credential:
@@ -47,9 +51,9 @@
     description: ec2
     organization: "Default"
     state: present
-    username: {{ AWS_KEY }} 
-    password: {{ AWS_SECRET }} 
-    tower_config_file: "~/tower_cli.cfg"
+    username: "{{ AWS_KEY }}"
+    password: "{{ AWS_SECRET }}"
+    tower_config_file: "~/.tower_cli.cfg"
 
 - name: Add tower inventory
   tower_inventory:
@@ -57,7 +61,7 @@
     description: "Only the best inventory ... ever!"
     organization: "Default"
     state: present
-    tower_config_file: "~/tower_cli.cfg"
+    tower_config_file: "~/.tower_cli.cfg"
 
 - name: Add tower group
   tower_group:
@@ -75,4 +79,49 @@
       elasticache: False
       hostname_variable: tag_Name
     state: present
-    tower_config_file: "~/tower_cli.cfg"
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Create openshift-ansible-contrib job template
+  tower_job_template:
+    name: aws-infrastructure
+    job_type: run
+    inventory: aws-inventory
+    project: openshift-ansible-contrib
+    playbook: "reference-architecture/aws-ansible/playbooks/infrastructure.yaml"
+    machine_credential: aws-privkey
+    cloud_credential: ec2
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+#- name: Create openshift_create_httpd_file job template
+#  tower_job_template:
+#    name: aws-infrastructure
+#    job_type: run
+#    inventory: aws-inventory
+#    project: openshift-ansible-contrib
+#    playbook: "reference-architecture/aws-ansible/playbooks/openshift_create_httpd_file.yaml"
+#    machine_credential: aws-privkey
+#    cloud_credential: ec2
+#    state: present
+#    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Create aws-openshift-install job template
+  tower_job_template:
+    name: aws-openshift-install
+    job_type: run
+    inventory: aws-inventory
+    become_enabled: yes
+    project: openshift-ansible-contrib
+    playbook: "reference-architecture/aws-ansible/playbooks/openshift-install.yaml"
+    machine_credential: aws-privkey
+    cloud_credential: ec2
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Create workflow-ocp-aws-install
+  command: tower-cli workflow create --name="workflow-ocp-aws-install" --organization="Default" --description="The best workflow"
+
+- name: Create a schema for workflow-ocp-aws-install
+  command: tower-cli workflow schema workflow-ocp-aws-install @schema.yml
+
+
