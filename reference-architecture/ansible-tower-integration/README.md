@@ -28,9 +28,9 @@ This section provides information about how to deploy Ansible Tower on various c
 
 Follow the [Deployment Steps](http://docs.aws.amazon.com/quickstart/latest/ansible-tower/deployment.html) section of the [Ansible Tower on AWS](http://docs.aws.amazon.com/quickstart/latest/ansible-tower/welcome.html) quickstart guide to deploy Ansible Tower on AWS.
 
-## Future Sections
+## Future Sections for deploying Tower on Providers
 
-We would like to add the following sections.
+We would welcome the addition of the the following sections to this guide:
 
 + Deploying Tower on Google Cloud
 + Deploying Tower on Microsoft Azure
@@ -71,9 +71,9 @@ There are many modules for tower (search tower_ [here](http://docs.ansible.com/a
 
 It also appears that workflows can be exported via a schema. There is a great document [here](https://github.com/ansible/tower-cli/blob/master/docs/WORKFLOWS.md) on how to do workflows via tower-cli. The problem is that schemas use IDs to describe relationships and these IDs are dynamically generated. I'm looking to see if I can just use the schema name now.
 
-## Future Sections
+## Future Sections for configuring deployments of OCP, Insights, CloudForms on Clouds
 
-We would like to add the following sections.
+We would welcome the addition of the following sections:
 
 + Configuring Ansible Tower for deployments on Google Cloud Platform
 + Configuring Ansible Tower for deployments on Microsoft Azure
