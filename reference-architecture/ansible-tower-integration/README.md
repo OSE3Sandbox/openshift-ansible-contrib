@@ -58,7 +58,7 @@ password=yourpassword
 ```
 $ git clone https://github.com/strategicdesignteam/openshift-ansible-contrib.git
 $ cd reference-architecture/ansible-tower-integration/tower_config
-$ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET>"
+$ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/PRIVKEY> AWS_KEY=<AWS_KEY> AWS_SECRET=<YOUR_AWS_SECRET> TOWER_HOSTNAME=tower.acme.com TOWER_USER=admin TOWER_PASSWORD=password"
 ```
 
 | Variable                   | Required           | Description                                   |
@@ -66,7 +66,7 @@ $ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/
 | AWS_MACHINE_KEY            | yes                | Your ssh key for connecting to AWS instances  |
 | AWS_KEY                    | yes                | Your AWS Key                                  |
 | AWS_SECRET                 | yes                | Your AWS Extra Key                            |
-| TOWER_HOSTNAME             | yes                | The hostname of the tower instance, like tower.acme.com     |
+| TOWER_HOSTNAME             | yes                | The hostname of the tower instance            |
 | TOWER_USER                 | yes                | Username (admin)                              |
 | TOWER_PASSWORD             | yes                | Password for TOWER_USER                       |
 
