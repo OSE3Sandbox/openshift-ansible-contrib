@@ -66,13 +66,16 @@ $ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/
 | AWS_MACHINE_KEY            | yes                | Your ssh key for connecting to AWS instances  |
 | AWS_KEY                    | yes                | Your AWS Key                                  |
 | AWS_SECRET                 | yes                | Your AWS Extra Key                            |
+| TOWER_HOSTNAME             | yes                | The hostname of the tower instance, like tower.acme.com     |
+| TOWER_USER                 | yes                | Username (admin)                              |
+| TOWER_PASSWORD             | yes                | Password for TOWER_USER                       |
 
 This will configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services. You should be able to log into Ansible Tower and execute the workflow named "workflow-ocp-aws-install". This workflow will:
 
 + Create a cloudformations template on AWS
 + Install OCP on those machines
-+ Deploy CloudForms
-+ Enable Red Hat Insights on OCP and CloudForms
++ Deploy CloudForms (Coming Soon)
++ Enable Red Hat Insights on OCP and CloudForms (Coming Soon)
 
 You can use the unconfig_tower playbook to remove everything that was created by the tower_config job. Note that since as mentioned in the "Some Interesting Notes:" section below inventory IDs are dynamically created and required in the schema, if you run this playbook and run tower_config.yaml again, you'll need to edit the schema.yaml *after* the first time it fails and manually change the name of the inventory to match and re-run it again. Alternatively, you can just manually finish creating the workflow. I'll be opening a RFE with the Ansible team on this.
 
