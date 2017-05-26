@@ -1,6 +1,5 @@
 - job_template: aws-infrastructure
   success_nodes:
-  - inventory_source: aws (aws-inventory - 59)
+REPLACEME
     success_nodes:
     - job_template: aws-openshift-install
-

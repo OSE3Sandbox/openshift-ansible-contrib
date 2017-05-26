@@ -33,9 +33,6 @@
 - name: Sync project
   command: tower-cli project update -n openshift-ansible-contrib
 
-- name: Sleepy time to let sync finish
-  command: sleep 5
-
 - name: Add tower credential for machine
   tower_credential:
     name: aws-privkey
@@ -84,6 +81,14 @@
     state: present
     tower_config_file: "~/.tower_cli.cfg"
 
+- name: Get Inventory Source ID
+  shell: curl -s -k -u {{ TOWER_USER }}:{{ TOWER_PASSWORD }} https://{{ TOWER_HOSTNAME }}/api/v1/inventory_sources/ | python -m json.tool | grep -m 1 id |awk -F":" '{print $2}' |awk -F"," '{print $1}' |sed 's/^[ \t]*//;s/[ \t]*$//'
+  register: myoutput
+
+- name: Debug myoutput
+  debug:
+    var: myoutput
+
 - name: Create openshift-ansible-contrib job template
   tower_job_template:
     name: aws-infrastructure
@@ -96,6 +101,7 @@
     state: present
     tower_config_file: "~/.tower_cli.cfg"
 
+# Will put this in once we get it into our repos
 #- name: Create openshift_create_httpd_file job template
 #  tower_job_template:
 #    name: aws-infrastructure
@@ -124,7 +130,17 @@
 - name: Create workflow-ocp-aws-install
   command: tower-cli workflow create --name="workflow-ocp-aws-install" --organization="Default" --description="The best workflow"
 
+- name: Replace inventory source
+  lineinfile:
+    path: schema.yml
+    regexp: '^REPLACEME'
+    line: '  - inventory_source: aws (aws-inventory - {{ myoutput.stdout }})'
+
 - name: Create a schema for workflow-ocp-aws-install
   command: tower-cli workflow schema workflow-ocp-aws-install @schema.yml
 
-
+- name: Reset schema file in case we run again
+  lineinfile:
+     path: schema.yml
+     regexp: '^(.*)inventory_source'
+     line: 'REPLACEME'
