@@ -1,0 +1,8 @@
+- hosts: tag_openshift_role_master
+  gather_facts: yes
+  become: yes
+
+  tasks:
+
+  - name: create httpd password
+    command: htpasswd -b -c /etc/origin/master/htpasswd {{ ocp_username }} {{ ocp_password }}
