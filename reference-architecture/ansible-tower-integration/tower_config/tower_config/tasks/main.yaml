@@ -18,20 +18,35 @@
     state: present
     tower_config_file: "~/.tower_cli.cfg"
 
-- name: Add tower project
+- name: Add tower project for openshift-ansible-contrib
   tower_project:
     name: "openshift-ansible-contrib"
     description: "sync openshift-ansible-contrib"
     organization: "Default"
-    scm_url: https://github.com/openshift/openshift-ansible-contrib.git
+    scm_url: https://github.com/strategicdesignteam/openshift-ansible-contrib.git
     scm_type: git
     scm_branch: master
     scm_update_on_launch: true
     state: present
     tower_config_file: "~/.tower_cli.cfg"
 
-- name: Sync project
+- name: Add tower project for ansible-redhat-access-insights-client
+  tower_project:
+    name: "ansible-redhat-access-insights-client"
+    description: "sync ansible-redhat-access-insights-client"
+    organization: "Default"
+    scm_url: https://github.com/strategicdesignteam/ansible-redhat-access-insights-client.git
+    scm_type: git
+    scm_branch: master
+    scm_update_on_launch: true
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Sync project openshift-ansible-contrib
   command: tower-cli project update -n openshift-ansible-contrib
+
+- name: Sync project ansible-redhat-access-insights-client
+  command: tower-cli project update -n ansible-redhat-access-insights-client
 
 - name: Add tower credential for machine
   tower_credential:
@@ -101,18 +116,29 @@
     state: present
     tower_config_file: "~/.tower_cli.cfg"
 
-# Will put this in once we get it into our repos
-#- name: Create openshift_create_httpd_file job template
-#  tower_job_template:
-#    name: aws-infrastructure
-#    job_type: run
-#    inventory: aws-inventory
-#    project: openshift-ansible-contrib
-#    playbook: "reference-architecture/aws-ansible/playbooks/openshift_create_httpd_file.yaml"
-#    machine_credential: aws-privkey
-#    cloud_credential: ec2
-#    state: present
-#    tower_config_file: "~/.tower_cli.cfg"
+- name: Create openshift_create_httpd_file job template
+  tower_job_template:
+    name: create_httpd_file
+    job_type: run
+    inventory: aws-inventory
+    project: openshift-ansible-contrib
+    playbook: "reference-architecture/ansible-tower-integration/create_httpd_file/create_httpd_file.yaml"
+    machine_credential: aws-privkey
+    cloud_credential: ec2
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Create redhat-access-insights client job template
+  tower_job_template:
+    name: redhat-access-insights-client
+    job_type: run
+    inventory: aws-inventory
+    project: ansible-redhat-access-insights-client
+    playbook: "redhat-access-insights-client.yaml"
+    machine_credential: aws-privkey
+    cloud_credential: ec2
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
 
 - name: Create aws-openshift-install job template
   tower_job_template:
@@ -144,3 +170,5 @@
      path: schema.yml
      regexp: '^(.*)inventory_source'
      line: 'REPLACEME'
+
+

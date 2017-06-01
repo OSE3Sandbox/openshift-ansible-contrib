@@ -21,6 +21,24 @@
     state: absent
     tower_config_file: "~/.tower_cli.cfg"
 
+- name: Remove create-httpd-file job template
+  tower_job_template:
+    name: create_httpd_file
+    job_type: run
+    project: openshift-ansible-contrib 
+    playbook: "reference-architecture/ansible-tower-integration/create_httpd_file/create_httpd_file.yaml"
+    state: absent
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Remove insights job template
+  tower_job_template:
+    name: redhat-access-insights-client
+    job_type: run
+    project: ansible-redhat-access-insights-client
+    playbook: "redhat-access-insights-client.yaml"
+    state: absent
+    tower_config_file: "~/.tower_cli.cfg"
+
 - name: Remove tower group
   tower_group:
     name: aws 
@@ -55,6 +73,12 @@
   tower_project:
     name: "openshift-ansible-contrib"
     state: absent 
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Remove tower project
+  tower_project:
+    name: "ansible-redhat-access-insights-client"
+    state: absent
     tower_config_file: "~/.tower_cli.cfg"
 
 - name: Remove tower organization
