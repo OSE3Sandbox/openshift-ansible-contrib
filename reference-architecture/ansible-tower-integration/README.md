@@ -70,21 +70,23 @@ $ ansible-playbook tower_config.yaml --extra-vars "AWS_MACHINE_SSH_KEY=<PATH/TO/
 | TOWER_USER                 | yes                | Username (admin)                              |
 | TOWER_PASSWORD             | yes                | Password for TOWER_USER                       |
 
-This will configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services. You should be able to log into Ansible Tower and execute the workflow named "workflow-ocp-aws-install". This workflow will:
+This will configure tower with all the inventories, credentials, job_templates, and workflows to begin deploying across Amazon Web Services. After this is done you will need to log into Ansible Tower and edit the job named "workflow-ocp-aws-install". You will need to edit the extra_vars section and 
+
+The workflow-ocp-aws-install can now be run. It will:
 
 + Create a cloudformations template on AWS
-+ Install OCP on those machines
-+ Deploy CloudForms (Coming Soon)
-+ Enable Red Hat Insights on OCP and CloudForms (Coming Soon)
++ Install OCP on the instances provided by the cloudformations template
++ Enable Red Hat Insights on OCP
++ Deploy CloudForms and configure the OCP cluster as a provider (Coming Soon)
 
-You can use the unconfig_tower playbook to remove everything that was created by the tower_config job. Note that since as mentioned in the "Some Interesting Notes:" section below inventory IDs are dynamically created and required in the schema, if you run this playbook and run tower_config.yaml again, you'll need to edit the schema.yaml *after* the first time it fails and manually change the name of the inventory to match and re-run it again. Alternatively, you can just manually finish creating the workflow. I'll be opening a RFE with the Ansible team on this.
+You can use the unconfig_tower playbook to remove everything that was created by the tower_config job.
 
 ```
 $ cd reference-architecture/ansible-tower-integration/tower_config
 $ ansible-playbook tower_unconfig.yaml
 ```
 
-Some interesting notes:
+Some interesting thing that were learned:
 
 There are many modules for tower (search tower_ [here](http://docs.ansible.com/ansible/list_of_all_modules.html)). There is no ansible module for creating a workflow. It would be helpful if this were available. For now, we will try to use the tower-cli. Also, there is no way to start an SCM update using the tower_project ansible module. It would be helpful if that existed, so the SCM update could be issued and then job_templates could reference the available playbooks that were synchronized.
 
