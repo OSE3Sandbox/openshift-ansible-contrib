@@ -1,6 +1,4 @@
 ---
 
 - name: create httpd password
-  gather_facts: yes
-  become: yes
   command: htpasswd -b -c /etc/origin/master/htpasswd {{ ocp_username }} {{ ocp_password }}
