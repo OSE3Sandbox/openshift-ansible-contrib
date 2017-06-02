@@ -1,4 +1,4 @@
 - hosts: localhost
   become: no
   roles:
-  - { role: tower_config, when: ansible_os_family == 'RedHat' }
+  - { role: create_httpd_file, when: ansible_os_family == 'RedHat' }
