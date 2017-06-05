@@ -6,9 +6,30 @@
     state: present
   become: true
 
+- name: Install python-devel
+  yum:
+    name: python-devel
+    state: present
+  become: true
+
 - name: Install Tower CLI
   pip:
     name: ansible-tower-cli
+  become: true
+
+- name: Install packaging pip library
+  pip:
+    name: packaging
+  become: true
+
+- name: Install azure pip library
+  pip:
+    name: azure==2.0.0rc5
+  become: true
+
+- name: Install msrestazure pip library
+  pip:
+    name: msrestazure
   become: true
 
 - name: Create tower organization
@@ -24,6 +45,18 @@
     description: "sync openshift-ansible-contrib"
     organization: "Default"
     scm_url: https://github.com/strategicdesignteam/openshift-ansible-contrib.git
+    scm_type: git
+    scm_branch: master
+    scm_update_on_launch: true
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Add tower project for ansibledeployocp
+  tower_project:
+    name: "ansibledeployocp"
+    description: "sync ansibledeployocp"
+    organization: "Default"
+    scm_url: https://github.com/glennswest/ansibledeployocp.git
     scm_type: git
     scm_branch: master
     scm_update_on_launch: true
@@ -48,11 +81,14 @@
 - name: Sync project ansible-redhat-access-insights-client
   command: tower-cli project update -n ansible-redhat-access-insights-client
 
+- name: Sync project ansibledeployocp
+  command: tower-cli project update -n ansibledeployocp
+
 - name: Add tower credential for machine
   tower_credential:
-    name: aws-privkey
+    name: machine-privkey
     kind: ssh
-    description: aws-privkey
+    description: machine-privkey
     organization: "Default"
     state: present
     ssh_key_data: "{{ AWS_MACHINE_SSH_KEY }}"
@@ -70,18 +106,33 @@
     password: "{{ AWS_SECRET }}"
     tower_config_file: "~/.tower_cli.cfg"
 
-- name: Add tower inventory
+- name: Add tower credential for azure
+  tower_credential:
+    name: azure
+    kind: azure
+    description: azure_rm
+    organization: "Default"
+    state: present
+    client: "{{ AZURE_CLIENT }}"
+    secret: "{{ AZURE_SECRET }}"
+    tenant: "{{ AZURE_TENANT }}"
+    subscription: "{{ AZURE_SUBSCRIPTION }}"
+    username: "{{ AZURE_USERNAME }}"
+    password: "{{ AZURE_PASSWORD }}"
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Add aws inventory
   tower_inventory:
     name: "aws-inventory"
-    description: "Only the best inventory ... ever!"
+    description: "Added by tower_config"
     organization: "Default"
     state: present
     tower_config_file: "~/.tower_cli.cfg"
 
-- name: Add tower group
+- name: Add aws group
   tower_group:
     name: aws 
-    description: "to the cloud"
+    description: "Added by tower_config"
     source: ec2
     credential: ec2
     inventory: "aws-inventory" 
@@ -93,6 +144,24 @@
       rds: False
       elasticache: False
       hostname_variable: tag_Name
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Add azure inventory
+  tower_inventory:
+    name: "azure-inventory"
+    description: "Added by tower_config"
+    organization: "Default"
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Add azure group
+  tower_group:
+    name: azure
+    description: "Added by tower_config"
+    source: azure
+    credential: azure
+    inventory: "azure-inventory"
     state: present
     tower_config_file: "~/.tower_cli.cfg"
 
@@ -108,7 +177,7 @@
     inventory: aws-inventory
     project: openshift-ansible-contrib
     playbook: "reference-architecture/aws-ansible/playbooks/infrastructure.yaml"
-    machine_credential: aws-privkey
+    machine_credential: machine-privkey
     cloud_credential: ec2
     state: present
     tower_config_file: "~/.tower_cli.cfg"
@@ -120,7 +189,7 @@
     inventory: aws-inventory
     project: openshift-ansible-contrib
     playbook: "reference-architecture/ansible-tower-integration/create_httpd_file/create_httpd_file.yaml"
-    machine_credential: aws-privkey
+    machine_credential: machine-privkey
     cloud_credential: ec2
     state: present
     tower_config_file: "~/.tower_cli.cfg"
@@ -132,7 +201,7 @@
     inventory: aws-inventory
     project: ansible-redhat-access-insights-client
     playbook: "redhat-access-insights-client.yaml"
-    machine_credential: aws-privkey
+    machine_credential: machine-privkey
     cloud_credential: ec2
     state: present
     tower_config_file: "~/.tower_cli.cfg"
@@ -145,7 +214,7 @@
     become_enabled: yes
     project: openshift-ansible-contrib
     playbook: "reference-architecture/aws-ansible/playbooks/openshift-install.yaml"
-    machine_credential: aws-privkey
+    machine_credential: machine-privkey
     cloud_credential: ec2
     state: present
     tower_config_file: "~/.tower_cli.cfg"
@@ -155,16 +224,35 @@
 
 - name: Replace inventory source
   lineinfile:
-    path: schema.yml
+    path: workflow-ocp-aws-install-schema.yml
     regexp: '^REPLACEME'
     line: '  - inventory_source: aws (aws-inventory - {{ myoutput.stdout }})'
 
 - name: Create a schema for workflow-ocp-aws-install
-  command: tower-cli workflow schema workflow-ocp-aws-install @schema.yml
+  command: tower-cli workflow schema workflow-ocp-aws-install @workflow-ocp-aws-install-schema.yml
+
+- name: Create azure-openshift-install job template
+  tower_job_template:
+    name: azure-openshift-install
+    job_type: run
+    inventory: azure-inventory
+    become_enabled: yes
+    project: ansibledeployocp 
+    playbook: "deploy.yml"
+    machine_credential: machine-privkey
+    cloud_credential: azure 
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Create workflow-ocp-azure-install
+  command: tower-cli workflow create --name="workflow-ocp-azure-install" --organization="Default" --description="A workflow for deploying OCP on Azure" -e @workflow-ocp-azure-install-extravars.yaml
+
+- name: Create a schema for workflow-ocp-azure-install
+  command: tower-cli workflow schema workflow-ocp-azure-install @workflow-ocp-azure-install-schema.yml
 
 - name: Reset schema file in case we run again
   lineinfile:
-     path: schema.yml
+     path: workflow-ocp-aws-install-schema.yml
      regexp: '^(.*)inventory_source'
      line: 'REPLACEME'
 
