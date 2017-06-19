@@ -36,20 +36,21 @@ chmod 600 /root/.ssh/id_rsa.pub
 chown root /root/.ssh/id_rsa
 chmod 600 /root/.ssh/id_rsa
 
-subscription-manager unregister 
-subscription-manager register --username $RHNUSERNAME --password ${RHNPASSWORD}
-subscription-manager attach --pool=$RHNPOOLID
-subscription-manager repos --disable="*"
-subscription-manager repos     --enable="rhel-7-server-rpms"     --enable="rhel-7-server-extras-rpms"
-subscription-manager repos     --enable="rhel-7-server-ose-3.4-rpms"
-yum -y install atomic-openshift-utils
-yum -y install wget git net-tools bind-utils iptables-services bridge-utils bash-completion httpd-tools
-                                                                                         
-touch /root/.updateok
+mkdir -p /var/lib/origin/openshift.local.volumes
+ZEROVG=$( parted -m /dev/sda print all 2>/dev/null | grep unknown | grep /dev/sd | cut -d':' -f1 | head -n1)
+parted -s -a optimal ${ZEROVG} mklabel gpt -- mkpart primary xfs 1 -1
+sleep 5
+mkfs.xfs -f ${ZEROVG}1
+echo "${ZEROVG}1  /var/lib/origin/openshift.local.volumes xfs  defaults,gquota  0  0" >> /etc/fstab
+mount ${ZEROVG}1
 
+DOCKERVG=$( parted -m /dev/sda print all 2>/dev/null | grep unknown | grep /dev/sd | cut -d':' -f1 | head -n1 )
+
+echo "DEVS=${DOCKERVG}" >> /etc/sysconfig/docker-storage-setup
 cat <<EOF > /etc/sysconfig/docker-storage-setup
-DEVS=/dev/sdc
+DEVS=$DOCKERVG
 VG=docker-vg
+DATA_SIZE=95%VG
 EXTRA_DOCKER_STORAGE_OPTIONS="--storage-opt dm.basesize=3G"
 EOF
 
@@ -64,4 +65,4 @@ cat <<EOF > /root/.ansible.cfg
 host_key_checking = False
 EOF
 
-
+touch /root/.updateok

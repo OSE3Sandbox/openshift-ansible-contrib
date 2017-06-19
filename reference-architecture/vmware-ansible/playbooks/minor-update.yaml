@@ -1,5 +1,5 @@
 ---
-- include: /usr/share/ansible/openshift-ansible/playbooks/byo/openshift-cluster/upgrades/{{ openshift_vers | default('v3_4') }}/upgrade.yml
+- include: /usr/share/ansible/openshift-ansible/playbooks/byo/openshift-cluster/upgrades/{{ openshift_vers | default('v3_5') }}/upgrade.yml
   vars:
     debug_level: 2
     openshift_debug_level: "{{ debug_level }}"
@@ -13,6 +13,6 @@
     openshift_cloudprovider_kind: vsphere
     load_balancer_hostname:
     deployment_type:
-    openshift_master_cluster_hostname: "internal-openshift-master.{{ load_balancer_hostname }}"
-    openshift_master_cluster_public_hostname: "openshift-master.{{ load_balancer_hostname }}"
+    openshift_master_cluster_hostname: "{{ load_balancer_hostname }}"
+    openshift_master_cluster_public_hostname: "{{ load_balancer_hostname }}"
     osm_default_node_selector: "role=app"

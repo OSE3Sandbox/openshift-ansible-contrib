@@ -22,18 +22,18 @@
       AmiId: "{{ ami }}"
       BastionInstanceType: "{{ bastion_instance_type }}"
       BastionUserData: "{{ lookup('file', 'user_data_bastion.yml') | b64encode }}"
-      MasterRootVolSize: 10
+      MasterRootVolSize: "10"
       BastionRootVolType: gp2
       MasterRootVolType: gp2
       MasterDockerVolSize: "{{ docker_storage }}"
       MasterDockerVolType: gp2
       MasterEtcdVolSize: "{{ etcd_storage }}"
       MasterEtcdVolType: gp2
-      MasterEmptyVolSize: 5
+      MasterEmptyVolSize: "5"
       MasterEmptyVolType: gp2
       MasterUserData: "{{ lookup('file', 'user_data_master.yml') | b64encode }}"
       InfraInstanceType: "{{ node_instance_type }}"
-      InfraRootVolSize: 15
+      InfraRootVolSize: "15"
       InfraRootVolType: gp2
       InfraDockerVolSize: "{{ docker_storage }}"
       InfraDockerVolType: gp2
@@ -41,7 +41,7 @@
       NodeEmptyVolType: gp2
       NodeUserData: "{{ lookup('file', 'user_data_node.yml') | b64encode }}"
       AppNodeInstanceType: "{{ app_instance_type }}"
-      NodeRootVolSize: 15
+      NodeRootVolSize: "15"
       NodeRootVolType: gp2
       NodeDockerVolSize: "{{ docker_storage }}"
       NodeDockerVolType: gp2
@@ -77,18 +77,18 @@
       AmiId: "{{ ami }}"
       BastionInstanceType: "{{ bastion_instance_type }}"
       BastionUserData: "{{ lookup('file', 'user_data_bastion.yml') | b64encode }}"
-      MasterRootVolSize: 10
+      MasterRootVolSize: "10"
       BastionRootVolType: gp2
       MasterRootVolType: gp2
       MasterDockerVolSize: "{{ docker_storage }}"
       MasterDockerVolType: gp2
       MasterEtcdVolSize: "{{ etcd_storage }}"
       MasterEtcdVolType: gp2
-      MasterEmptyVolSize: 5
+      MasterEmptyVolSize: "5"
       MasterEmptyVolType: gp2
       MasterUserData: "{{ lookup('file', 'user_data_master.yml') | b64encode }}"
       InfraInstanceType: "{{ node_instance_type }}"
-      InfraRootVolSize: 15
+      InfraRootVolSize: "15"
       InfraRootVolType: gp2
       InfraDockerVolSize: "{{ docker_storage }}"
       InfraDockerVolType: gp2
@@ -96,7 +96,7 @@
       NodeEmptyVolType: gp2
       NodeUserData: "{{ lookup('file', 'user_data_node.yml') | b64encode }}"
       AppNodeInstanceType: "{{ app_instance_type }}"
-      NodeRootVolSize: 15
+      NodeRootVolSize: "15"
       NodeRootVolType: gp2
       NodeDockerVolSize: "{{ docker_storage }}"
       NodeDockerVolType: gp2
@@ -131,17 +131,17 @@
       KeyName: "{{ keypair }}"
       MasterInstanceType: "{{ master_instance_type }}"
       AmiId: "{{ ami }}"
-      MasterRootVolSize: 10
+      MasterRootVolSize: "10"
       MasterRootVolType: gp2
       MasterDockerVolSize: "{{ docker_storage }}"
       MasterDockerVolType: gp2
       MasterEtcdVolSize: "{{ etcd_storage }}"
       MasterEtcdVolType: gp2
-      MasterEmptyVolSize: 5
+      MasterEmptyVolSize: "5"
       MasterEmptyVolType: gp2
       MasterUserData: "{{ lookup('file', 'user_data_master.yml') | b64encode }}"
       InfraInstanceType: "{{ node_instance_type }}"
-      InfraRootVolSize: 15
+      InfraRootVolSize: "15"
       InfraRootVolType: gp2
       InfraDockerVolSize: "{{ docker_storage }}"
       InfraDockerVolType: gp2
@@ -149,7 +149,7 @@
       NodeEmptyVolType: gp2
       NodeUserData: "{{ lookup('file', 'user_data_node.yml') | b64encode }}"
       AppNodeInstanceType: "{{ app_instance_type }}"
-      NodeRootVolSize: 15
+      NodeRootVolSize: "15"
       NodeRootVolType: gp2
       NodeDockerVolSize: "{{ docker_storage }}"
       NodeDockerVolType: gp2
@@ -167,7 +167,7 @@
     template: "roles/cloudformation-infra/files/add-node.json"
     template_parameters:
       NodeName: "{{ fqdn }}"
-      NodeSg: "{{ node_sg }}"
+      NodeSg: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeSGId'] | default(node_sg) }}"
       Subnet: "{{ subnet_id }}"
       Route53HostedZone: "{{ public_hosted_zone }}."
       KeyName: "{{ keypair }}"
@@ -176,11 +176,11 @@
       NodeEmptyVolSize: "{{ emptydir_storage }}"
       NodeEmptyVolType: gp2
       NodeUserData: "{{ lookup('file', 'user_data_node.yml') | b64encode }}"
-      NodeRootVolSize: 15
+      NodeRootVolSize: "15"
       NodeRootVolType: gp2
       NodeDockerVolSize: "{{ docker_storage }}"
       NodeDockerVolType: gp2
-      NodeInstanceProfile: "{{ iam_role }}"
+      NodeInstanceProfile: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeARN'] | default(iam_role) }}"
       NodeType: "{{ node_type }}"
     tags:
       KubernetesCluster: "{{ stack_name }}"
@@ -194,8 +194,8 @@
     template: "roles/cloudformation-infra/files/add-infra-node.json"
     template_parameters:
       NodeName: "{{ fqdn }}"
-      NodeSg: "{{ node_sg }}"
-      InfraSg: "{{ infra_sg }}"
+      NodeSg: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeSGId'] | default(node_sg) }}"
+      InfraSg: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['InfraSGId'] | default(infra_sg) }}"
       Subnet: "{{ subnet_id }}"
       Route53HostedZone: "{{ public_hosted_zone }}."
       KeyName: "{{ keypair }}"
@@ -204,12 +204,138 @@
       NodeEmptyVolSize: "{{ emptydir_storage }}"
       NodeEmptyVolType: gp2
       NodeUserData: "{{ lookup('file', 'user_data_node.yml') | b64encode }}"
-      NodeRootVolSize: 15
+      NodeRootVolSize: "15"
       NodeRootVolType: gp2
       NodeDockerVolSize: "{{ docker_storage }}"
       NodeDockerVolType: gp2
-      NodeInstanceProfile: "{{ iam_role }}"
+      NodeInstanceProfile: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeARN'] | default(iam_role) }}"
       NodeType: "{{ node_type }}"
     tags:
       KubernetesCluster: "{{ stack_name }}"
   when: create_vpc == "no" and add_node == "yes" and node_type == "infra"
+
+- name: Add CNS Gluster Nodes with io1
+  cloudformation:
+    stack_name: "{{ stack_name }}-{{ gluster_stack }}"
+    state: "present"
+    region: "{{ region }}"
+    template: "roles/cloudformation-infra/files/add-cns-storage-iops.json"
+    template_parameters:
+      GlusterNodeDns1: "{{ gluster_node01 }}"
+      GlusterNodeDns2: "{{ gluster_node02 }}"
+      GlusterNodeDns3: "{{ gluster_node03 }}"
+      NodeSg: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeSGId'] | default(node_sg) }}"
+      PrivateSubnet1: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet1'] | default(private_subnet_id1) }}"
+      PrivateSubnet2: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet2'] | default(private_subnet_id2) }}"
+      PrivateSubnet3: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet3'] | default(private_subnet_id3) }}"
+      PublicHostedZone: "{{ public_hosted_zone }}"
+      Route53HostedZone: "{{ public_hosted_zone }}."
+      KeyName: "{{ keypair }}"
+      AmiId: "{{ ami }}"
+      InstanceType: "{{ node_instance_type }}"
+      NodeEmptyVolSize: "{{ emptydir_storage }}"
+      NodeEmptyVolType: gp2
+      NodeUserData: "{{ lookup('file', 'user_data_node.yml') | b64encode }}"
+      NodeRootVolSize: "15"
+      NodeRootVolType: gp2
+      GlusterVolSize: "{{ gluster_volume_size }}"
+      GlusterVolType: "{{ gluster_volume_type }}"
+      Iops: "{{ iops }}"
+      NodeDockerVolSize: "{{ docker_storage }}"
+      NodeDockerVolType: gp2
+      NodeInstanceProfile: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeARN'] | default(iam_role) }}"
+      NodeType: "{{ node_type }}"
+    tags:
+      KubernetesCluster: "{{ stack_name }}"
+  when: create_vpc == "no" and add_node == "yes" and node_type == "gluster" and gluster_volume_type == "io1"
+
+- name: Add CNS Gluster Nodes
+  cloudformation:
+    stack_name: "{{ stack_name }}-{{ gluster_stack }}"
+    state: "present"
+    region: "{{ region }}"
+    template: "roles/cloudformation-infra/files/add-cns-storage.json"
+    template_parameters:
+      GlusterNodeDns1: "{{ gluster_node01 }}"
+      GlusterNodeDns2: "{{ gluster_node02 }}"
+      GlusterNodeDns3: "{{ gluster_node03 }}"
+      NodeSg: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeSGId'] | default(node_sg) }}"
+      PrivateSubnet1: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet1'] | default(private_subnet_id1) }}"
+      PrivateSubnet2: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet2'] | default(private_subnet_id2) }}"
+      PrivateSubnet3: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet3'] | default(private_subnet_id3) }}"
+      PublicHostedZone: "{{ public_hosted_zone }}"
+      Route53HostedZone: "{{ public_hosted_zone }}."
+      KeyName: "{{ keypair }}"
+      AmiId: "{{ ami }}"
+      InstanceType: "{{ node_instance_type }}"
+      NodeEmptyVolSize: "{{ emptydir_storage }}"
+      NodeEmptyVolType: gp2
+      NodeUserData: "{{ lookup('file', 'user_data_node.yml') | b64encode }}"
+      NodeRootVolSize: "15"
+      NodeRootVolType: gp2
+      GlusterVolSize: "{{ gluster_volume_size }}"
+      GlusterVolType: "{{ gluster_volume_type }}"
+      NodeDockerVolSize: "{{ docker_storage }}"
+      NodeDockerVolType: gp2
+      NodeInstanceProfile: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeARN'] | default(iam_role) }}"
+      NodeType: "{{ node_type }}"
+    tags:
+      KubernetesCluster: "{{ stack_name }}"
+  when: create_vpc == "no" and add_node == "yes" and node_type == "gluster" and gluster_volume_type != "io1"
+
+- name: Add CRS Gluster Nodes with IO1
+  cloudformation:
+    stack_name: "{{ stack_name }}-{{ gluster_stack }}"
+    state: "present"
+    region: "{{ region }}"
+    template: "roles/cloudformation-infra/files/add-crs-storage-iops.json"
+    template_parameters:
+      Vpc: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['StackVpc'] | default(vpc) }}"
+      BastionSG: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['BastionSGId'] | default(bastion_sg) }}"
+      NodeSG: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeSGId'] | default(node_sg) }}"
+      GlusterNodeDns1: "{{ gluster_node01 }}"
+      GlusterNodeDns2: "{{ gluster_node02 }}"
+      GlusterNodeDns3: "{{ gluster_node03 }}"
+      PrivateSubnet1: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet1'] | default(private_subnet_id1) }}"
+      PrivateSubnet2: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet2'] | default(private_subnet_id2) }}"
+      PrivateSubnet3: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet3'] | default(private_subnet_id3) }}"
+      PublicHostedZone: "{{ public_hosted_zone }}"
+      Route53HostedZone: "{{ public_hosted_zone }}."
+      KeyName: "{{ keypair }}"
+      AmiId: "{{ ami }}"
+      InstanceType: "{{ node_instance_type }}"
+      NodeUserData: "{{ lookup('file', 'user_data_gluster.yml') | b64encode }}"
+      NodeRootVolSize: "15"
+      NodeRootVolType: gp2
+      GlusterVolSize: "{{ gluster_volume_size }}"
+      GlusterVolType: "{{ gluster_volume_type }}"
+      Iops: "{{ iops }}"
+  when: deploy_crs is defined and create_vpc == "no" and deploy_crs == "yes" and gluster_volume_type == "io1"
+
+- name: Add CRS Gluster Nodes
+  cloudformation:
+    stack_name: "{{ stack_name }}-{{ gluster_stack }}"
+    state: "present"
+    region: "{{ region }}"
+    template: "roles/cloudformation-infra/files/add-crs-storage.json"
+    template_parameters:
+      Vpc: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['StackVpc'] | default(vpc) }}"
+      BastionSG: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['BastionSGId'] | default(bastion_sg) }}"
+      NodeSG: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['NodeSGId'] | default(node_sg) }}"
+      GlusterNodeDns1: "{{ gluster_node01 }}"
+      GlusterNodeDns2: "{{ gluster_node02 }}"
+      GlusterNodeDns3: "{{ gluster_node03 }}"
+      PrivateSubnet1: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet1'] | default(private_subnet_id1) }}"
+      PrivateSubnet2: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet2'] | default(private_subnet_id2) }}"
+      PrivateSubnet3: "{{ stack['ansible_facts']['cloudformation'][stack_name]['stack_outputs']['PrivateSubnet3'] | default(private_subnet_id3) }}"
+      PublicHostedZone: "{{ public_hosted_zone }}"
+      Route53HostedZone: "{{ public_hosted_zone }}."
+      KeyName: "{{ keypair }}"
+      AmiId: "{{ ami }}"
+      InstanceType: "{{ node_instance_type }}"
+      NodeUserData: "{{ lookup('file', 'user_data_gluster.yml') | b64encode }}"
+      NodeRootVolSize: "15"
+      NodeRootVolType: gp2
+      GlusterVolSize: "{{ gluster_volume_size }}"
+      GlusterVolType: "{{ gluster_volume_type }}"
+  when: deploy_crs is defined and create_vpc == "no" and deploy_crs == "yes" and gluster_volume_type != "io1"

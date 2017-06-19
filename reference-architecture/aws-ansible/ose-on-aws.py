@@ -14,7 +14,7 @@ import sys
               show_default=True)
 @click.option('--deployment-type', default='openshift-enterprise', type=click.Choice(['origin', 'openshift-enterprise']),  help='OpenShift deployment type',
               show_default=True)
-@click.option('--openshift-sdn', default='openshift-ovs-subnet', type=click.Choice(['openshift-ovs-subnet', 'openshift-ovs-multitenant']),  help='OpenShift SDN',
+@click.option('--openshift-sdn', default='redhat/openshift-ovs-subnet', help='OpenShift SDN (redhat/openshift-ovs-subnet, redhat/openshift-ovs-multitenant, or other supported SDN)',
               show_default=True)
 
 ### AWS/EC2 options
@@ -22,11 +22,11 @@ import sys
               show_default=True)
 @click.option('--ami', default='ami-a33668b4', help='ec2 ami',
               show_default=True)
-@click.option('--master-instance-type', default='m4.large', help='ec2 instance type',
+@click.option('--master-instance-type', default='m4.xlarge', help='ec2 instance type',
               show_default=True)
-@click.option('--node-instance-type', default='t2.medium', help='ec2 instance type',
+@click.option('--node-instance-type', default='t2.large', help='ec2 instance type',
               show_default=True)
-@click.option('--app-instance-type', default='t2.medium', help='ec2 instance type',
+@click.option('--app-instance-type', default='t2.large', help='ec2 instance type',
               show_default=True)
 @click.option('--bastion-instance-type', default='t2.micro', help='ec2 instance type',
               show_default=True)
@@ -62,7 +62,7 @@ import sys
 @click.option('--rhsm-user', help='Red Hat Subscription Management User')
 @click.option('--rhsm-password', help='Red Hat Subscription Management Password',
                 hide_input=True,)
-@click.option('--rhsm-pool', help='Red Hat Subscription Management Pool ID or Subscription Name')
+@click.option('--rhsm-pool', help='Red Hat Subscription Management Pool Name')
 
 ### Miscellaneous options
 @click.option('--byo-bastion', default='no', help='skip bastion install when one exists within the cloud provider',
@@ -76,6 +76,9 @@ import sys
 @click.option('--github-client-secret', help='GitHub OAuth Client Secret')
 @click.option('--github-organization', multiple=True, help='GitHub Organization')
 @click.option('--s3-username',  help='S3 user for registry access')
+@click.option('--deploy-openshift-metrics',  help='Deploy OpenShift Metrics', type=click.Choice(['true', 'false']), default='false')
+@click.option('--openshift-hosted-metrics-storage-volume-size', default='20Gi', help='Size of OptionShift Metrics Persistent Volume',
+              show_default=False)
 @click.option('--no-confirm', is_flag=True,
               help='Skip confirmation prompt')
 @click.help_option('--help', '-h')
@@ -116,6 +119,8 @@ def launch_refarch_env(region=None,
                     github_client_id=None,
                     github_client_secret=None,
                     github_organization=None,
+                    deploy_openshift_metrics=None,
+                    openshift_hosted_metrics_storage_volume_size=None,
                     verbose=0):
 
   # Need to prompt for the R53 zone:
@@ -224,6 +229,8 @@ def launch_refarch_env(region=None,
   click.echo('\tgithub_client_id: *******')
   click.echo('\tgithub_client_secret: *******')
   click.echo('\tgithub_organization: %s' % (','.join(github_organization)))
+  click.echo('\tdeploy_openshift_metrics: %s' % deploy_openshift_metrics)
+  click.echo('\topenshift_hosted_metrics_storage_volume_size: %s' % openshift_hosted_metrics_storage_volume_size)
   click.echo("")
 
   if not no_confirm:
@@ -282,7 +289,9 @@ def launch_refarch_env(region=None,
     s3_username=%s \
     github_client_id=%s \
     github_client_secret=%s \
-    github_organization=%s\' %s' % (region,
+    github_organization=%s \
+    openshift_hosted_metrics_deploy=%s \
+    openshift_hosted_metrics_storage_volume_size=%s \' %s' % (region,
                     stack_name,
                     ami,
                     keypair,
@@ -316,6 +325,8 @@ def launch_refarch_env(region=None,
                     github_client_id,
                     github_client_secret,
                     str(map(lambda x: x.encode('utf8'), github_organization)).replace("'", '"').replace(' ', ''),
+                    deploy_openshift_metrics,
+                    openshift_hosted_metrics_storage_volume_size,
                     playbook)
 
     if verbose > 0:

@@ -1,9 +1,9 @@
 ---
 # AWS instance specific configuration
 bastion_instance_type: t2.micro
-docker_storage: 25
-etcd_storage: 25
-emptydir_storage: 50
+docker_storage: "25"
+etcd_storage: "25"
+emptydir_storage: "50"
 vpc_prefix: "ose-multi-az-vpc-{{ stack_name }}"
 public_subnet_prefix: OSE-Public-Subnet
 private_subnet_prefix: OSE-Private-Subnet
@@ -19,3 +19,9 @@ openshift_master_cluster_method: native
 openshift_master_cluster_hostname: "internal-openshift-master.{{ public_hosted_zone }}"
 openshift_master_cluster_public_hostname: "openshift-master.{{ public_hosted_zone }}"
 osm_default_subdomain: "{{ wildcard_zone }}"
+
+# Gluster variables
+gluster_node01: "ose-{{ gluster_stack }}-node01"
+gluster_node02: "ose-{{ gluster_stack }}-node02"
+gluster_node03: "ose-{{ gluster_stack }}-node03"
+gluster_group: "{{ stack_name }}-{{ gluster_stack }}"

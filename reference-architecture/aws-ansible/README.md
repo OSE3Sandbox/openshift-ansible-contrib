@@ -1,5 +1,5 @@
 # The Reference Architecture OpenShift on Amazon Web Services
-This repository contains the scripts used to deploy an OpenShift Container Platform or OpenShift Origin environment based off of the Reference Architecture Guide for OCP 3.4 on Amazon Web Services.
+This repository contains the scripts used to deploy an OpenShift Container Platform or OpenShift Origin environment based off of the Reference Architecture Guide for OCP 3.5 on Amazon Web Services.
 
 ## Overview
 The repository contains Ansible playbooks which deploy 3 Masters in different availability zones, 3 infrastructure nodes and 2 applcation nodes. The Infrastrucute and Application nodes are split between availbility zones.  The playbooks deploy a Docker registry and scale the router to the number of Infrastruture nodes.
@@ -14,13 +14,13 @@ The code in this repository handles all of the AWS specific components except fo
 
 ```
 $ subscription-manager repos --enable rhel-7-server-optional-rpms
-$ subscription-manager repos --enable rhel-7-server-ose-3.4-rpms
+$ subscription-manager repos --enable rhel-7-server-ose-3.5-rpms
+$ subscription-manager repos --enable rhel-7-fast-datapath-rpms
+$ yum -y install atomic-openshift-utils ansible
 $ rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ yum -y install atomic-openshift-utils \
-                 python2-boto \
+$ yum -y install python2-boto \
                  pyOpenSSL \
                  git \
-                 ansible \
                  python-netaddr \
                  python-six \
                  python2-boto3 \
@@ -92,7 +92,7 @@ When installing into an new AWS environment perform the following.   This will c
 ./ose-on-aws.py --keypair=OSE-key --create-key=yes --key-path=/path/to/ssh/key.pub --rhsm-user=rh-user --rhsm-password=password \
 --public-hosted-zone=sysdeseng.com --rhsm-pool="Red Hat OpenShift Container Platform, Standard, 2-Core" \
 --github-client-secret=47a0c41f0295b451834675ed78aecfb7876905f9 --github-organization=openshift \
---github-organization=RHSyseng --github-client-id=3a30415d84720ad14abc
+--github-organization=RHSyseng --github-client-id=3a30415d84720ad14abc --deploy-openshift-metrics=true
 
 ```
 **OpenShift Origin**
@@ -154,6 +154,37 @@ The same greenfield and brownfield deployment steps can be used to launch anothe
 --github-organization=RHSyseng --github-client-id=3a30415d84720ad14abc
 ```
 
+
+## Adding nodes 
+Adding nodes can be done by performing the following. The configuration option --node-type allows for the creation of application or
+infrastructure nodes. If the deployment is for an application node --infra-sg and --infra-elb-name are not required.
+
+If `--use-cloudformation-facts` is not used the `--iam-role` or `Specify the name of the existing IAM Instance Profile:`
+is available visiting the IAM Dashboard and selecting the role sub-menu. Select the
+node role and record the information from the `Instance Profile ARN(s)` line. An
+example Instance Profile would be `OpenShift-Infra-NodeInstanceProfile-TNAGMYGY9W8K`.
+
+If the Reference Architecture deployment is >= 3.5
+
+```
+$ ./add-node.py --existing-stack=dev --rhsm-user=rhsm-user --rhsm-password=password
+--public-hosted-zone=sysdeseng.com --keypair=OSE-key --rhsm-pool="Red Hat OpenShift Container Platform, Premium, 2-Core"
+--use-cloudformation-facts --shortname=ose-infra-node04 --node-type=infra --subnet-id=subnet-0a962f4
+```
+
+If the Reference Architecture deployment was performed before 3.5.
+
+```
+$ ./add-node.py --rhsm-user=user --rhsm-password=password --public-hosted-zone=sysdeseng.com
+--keypair=OSE-key --rhsm-pool="Red Hat OpenShift Container Platform, Premium, 2-Core" --node-type=infra
+--iam-role=OpenShift-Infra-NodeInstanceProfile-TNAGMYGY9W8K --node-sg=sg-309f9a4a --infra-sg=sg-289f9a52
+--shortname=ose-infra-node04 --subnet-id=subnet-0a962f4 --infra-elb-name=OpenShift-InfraElb-1N0DZ3CFCAHLV
+```
+
+## Gluster Storage
+If there is a desire to use CNS or Gluster storage for OpenShift visit the link below
+https://access.redhat.com/documentation/en-us/reference_architectures/2017/html/deploying_openshift_container_platform_3_on_amazon_web_services/#persistent_storage
+
 ## Teardown
 
 A playbook is included to remove the s3 bucket and cloudformation. The parameter ci=true should not be used unless there is 100% certanty that all unattached EBS volumes can be removed.
@@ -161,4 +192,7 @@ A playbook is included to remove the s3 bucket and cloudformation. The parameter
 ```
 ansible-playbook -i inventory/aws/hosts -e 'region=us-east-1 stack_name=openshift-infra ci=false' playbooks/teardown.yaml
 ```
-A registered domain must be added to Route53 as a Hosted Zone before installation.  This registered domain can be purchased through AWS.
+If nodes were added to the environment the following can be ran. Below shows all of the possible teardown additions.
+```
+ansible-playbook -i inventory/aws/hosts -e 'region=us-east-1 stack_name=openshift-infra ci=true' -e 'extra_app_nodes=openshift-infra-ose-app-node03' -e 'gluster_nodes=openshift-infra-cns' -e 'extra_infra_nodes=openshift-infra-ose-infra-node04' playbooks/teardown.yaml
+```

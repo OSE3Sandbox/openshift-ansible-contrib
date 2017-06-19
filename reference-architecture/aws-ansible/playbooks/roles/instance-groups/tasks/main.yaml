@@ -15,7 +15,7 @@
       KubernetesCluster: "{{ stack_name }}"
   with_items: "{{ groups['tag_openshift_role_master'] }}"
   when:
-    - hostvars[item]['ec2_tag_KubernetesCluster'] == "{{ stack_name }}"
+    - hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name
 
 - name: Add a master to the single master group
   add_host:
@@ -35,7 +35,7 @@
       KubernetesCluster: "{{ stack_name }}"
   with_items: "{{ groups['tag_openshift_role_infra'] }}"
   when:
-    - hostvars[item]['ec2_tag_KubernetesCluster'] == "{{ stack_name }}"
+    - hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name
 
 - name: Add app instances to host group
   add_host:
@@ -46,7 +46,18 @@
       KubernetesCluster: "{{ stack_name }}"
   with_items: "{{ groups['tag_openshift_role_app'] }}"
   when:
-    - hostvars[item]['ec2_tag_KubernetesCluster'] == "{{ stack_name }}"
+    - hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name
+
+- name: Add storage instances to host group
+  add_host:
+    name: "{{ hostvars[item].ec2_tag_Name }}"
+    groups: nodes, cns, cluster_hosts, schedulable_nodes, storage
+    openshift_node_labels:
+      role: storage
+      KubernetesCluster: "{{ stack_name }}"
+  with_items: "{{ groups['tag_openshift_role_storage'] }}"
+  when:
+    - groups.tag_openshift_role_storage is defined and hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name
 
 - name: Add new node instances to host group
   add_host:
@@ -57,5 +68,15 @@
       KubernetesCluster: "{{ stack_name }}"
   with_items: "{{ groups.tag_provision_node | default([]) }}"
   when:
-    - add_node is defined
-    - hostvars[item]['ec2_tag_aws_cloudformation_stack_name'] == "{{ stack_name }}-{{ shortname }}"
+    - new_node_stack is defined and node_type != "gluster" and hostvars[item]['ec2_tag_aws_cloudformation_stack_name'] == new_node_stack and add_node is defined and add_node == "yes"
+
+- name: Add new gluster node instances to host group
+  add_host:
+    name: "{{ hostvars[item].ec2_tag_Name }}"
+    groups: new_nodes, gluster
+    openshift_node_labels:
+      role: storage
+      KubernetesCluster: "{{ stack_name }}"
+  with_items: "{{ groups.tag_provision_node | default([]) }}"
+  when:
+    - groups.tag_openshift_role_storage is defined and hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name and add_node is defined and add_node == "yes"

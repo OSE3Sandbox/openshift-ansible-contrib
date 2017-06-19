@@ -11,7 +11,7 @@ Described usage is for RHEL 7 based operating system.
 
 Installation of gcloud utility is interactive, usually you will want to answer positively to asked questions.
 ```
-sudo yum -y install curl python which tar qemu-img openssl gettext git ansible python-libcloud
+sudo yum -y install curl python which tar qemu-img openssl git ansible python-libcloud python2-jmespath java-1.8.0-openjdk-headless httpd-tools python2-passlib
 curl https://sdk.cloud.google.com | bash
 exec -l $SHELL
 gcloud components install beta
@@ -22,34 +22,27 @@ Note: You need to have GNU tar because the BSD version will not work. Also, it m
 
 ### Ansible Installer
 
-Currently, we are in a process of migrating away from shell to pure Ansible deployment. Most notable change of this process is that the whole deployment will be run from the local machine and not partly from the bastion host. Because of this change, we now require Ansible installer locally available. If you are running RHEL-7 with proper subscription, just install the `atomic-openshift-utils` package:
-```
-subscription-manager repos --enable rhel-7-server-optional-rpms
-subscription-manager repos --enable rhel-7-server-ose-3.4-rpms
-yum -y install atomic-openshift-utils
-```
-
-For Fedora, clone the `openshift-ansible` repo next to the `openshift-ansible-contrib` repo (info below) and **switch to the correct tag**, currently it's `openshift-ansible-3.4.75-1`:
+Currently, we are in a process of migrating away from shell to pure Ansible deployment. Most notable change of this process is that the whole deployment will be run from the local machine and not partly from the bastion host. Because of this change, we now require Ansible installer locally available. Please, clone the `openshift-ansible` repo next to the `openshift-ansible-contrib` repo (info below) and **switch to the correct tag**, currently it's `openshift-ansible-3.5.5.21-1`:
 ```
 git clone https://github.com/openshift/openshift-ansible.git
 cd openshift-ansible
-git checkout openshift-ansible-3.4.75-1
+git checkout openshift-ansible-3.5.5.21-1
 cd ..
 ```
 
 ### Clone this repository
 
-Now clone this repository to your local directory and copy the `config.sh.example` file to `config.sh`
+Now clone this repository to your local directory and copy the `config.yaml.example` file to `config.yaml`
 
 ```
 git clone https://github.com/openshift/openshift-ansible-contrib.git
 cd openshift-ansible-contrib/reference-architecture/gce-cli
-cp config.sh.example config.sh
+cp config.yaml.example config.yaml
 ```
 
 ### Setting variables
 
-Variables can be set to customize the OpenShift infrastructure. All available variables can be found in the `config.sh` file. In the first part of that file you can find essential variables which need to be modified (like credentials for Red Hat account and DNS). In the second part of the file all default values are available, which can be optionally tweaked.
+Variables can be set to customize the OpenShift infrastructure. All available variables can be found in the `config.yaml` file. In the first part of that file you can find essential variables which need to be modified (like credentials for Red Hat account and DNS). In the second part of the file all default values are available, which can be optionally tweaked.
 
 ### Launching the Bash script
 
