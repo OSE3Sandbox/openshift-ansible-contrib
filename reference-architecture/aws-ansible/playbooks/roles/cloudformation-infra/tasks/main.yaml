@@ -25,9 +25,9 @@
       MasterRootVolSize: 10
       BastionRootVolType: "gp2"
       MasterRootVolType: "gp2"
-      MasterDockerVolSize: "{{ docker_storage }}"
+      MasterDockerVolSize: 30
       MasterDockerVolType: "gp2"
-      MasterEtcdVolSize: "{{ etcd_storage }}"
+      MasterEtcdVolSize: 30
       MasterEtcdVolType: "gp2"
       MasterEmptyVolSize: 5
       MasterEmptyVolType: "gp2"
@@ -35,15 +35,15 @@
       InfraInstanceType: "{{ node_instance_type }}"
       InfraRootVolSize: 15
       InfraRootVolType: "gp2"
-      InfraDockerVolSize: "{{ docker_storage }}"
+      InfraDockerVolSize: 30
       InfraDockerVolType: "gp2"
-      NodeEmptyVolSize: "{{ emptydir_storage }}"
+      NodeEmptyVolSize: 30
       NodeEmptyVolType: "gp2"
       NodeUserData: "{{ lookup('file', 'user_data_node.yml') | b64encode }}"
       AppNodeInstanceType: "{{ app_instance_type }}"
       NodeRootVolSize: 15
       NodeRootVolType: "gp2"
-      NodeDockerVolSize: {{ docker_storage }}
+      NodeDockerVolSize: 30
       NodeDockerVolType: "gp2"
       S3BucketName: "{{ s3_bucket_name }}"
       S3User: "{{ s3_username }}"
