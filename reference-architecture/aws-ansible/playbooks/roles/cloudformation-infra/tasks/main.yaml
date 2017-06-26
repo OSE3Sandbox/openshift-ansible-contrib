@@ -9,7 +9,7 @@
       Region: "{{ region }}"
       Route53HostedZone: "{{ public_hosted_zone }}."
       PublicHostedZone: "{{ public_hosted_zone }}"
-      MasterApiPort: {{ console_port }}
+      MasterApiPort: 443
       MasterHealthTarget: "TCP:{{ console_port }}"
       MasterClusterHostname: "{{ openshift_master_cluster_hostname }}"
       MasterClusterPublicHostname: "{{ openshift_master_cluster_public_hostname }}"
